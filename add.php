@@ -6,10 +6,10 @@ if(isset($_POST['add_contact'])) {
     $phone = $_POST['phone'];
     $email = $_POST['email'];
     $address = $_POST['address'];
-    $notes = $_POST['notes'];
+    $notes = !empty($_POST['notes'])? $_POST['notes'] : '---';
 
     $stmt = $pdo->prepare("INSERT INTO contacts (full_name, phone, email, address, notes) VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$full_name, $email, $phone, $address, $notes]);
+    $stmt->execute([$full_name, $phone, $email, $address, $notes]);
 
     header("Location: index.php");
     exit();

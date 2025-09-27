@@ -4,6 +4,14 @@ require 'db.php';
 $stmt = $pdo->query("SELECT * FROM contacts");
 $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+if (isset($_GET['delete_id'])) {
+    $delete_id = (int) $_GET['delete_id'];
+    $stmt = $pdo->prepare("DELETE FROM contacts WHERE id = ?");
+    $stmt->execute([$delete_id]);
+
+    header("Location: index.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -29,8 +37,8 @@ $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <tr>
                     <th>#</th>
                     <th>Full Name</th>
-                    <th>Email</th>
                     <th>Phone</th>
+                    <th>Email</th>
                     <th>Address</th>
                     <th>Note</th>
                     <th>Action</th>
@@ -38,25 +46,27 @@ $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </thead>
             <tbody>
                 <?php if ($contacts): ?>
-                    <?php foreach ($contacts as $contact): ?>
-                        <tr>
-                            <td><?= $contact['id']?></td>
-                            <td><?= htmlspecialchars($contact['full_name'])?></td>
-                            <td><?= htmlspecialchars($contact['email'])?></td>
-                            <td><?= htmlspecialchars($contact['phone'])?></td>
-                            <td><?= htmlspecialchars($contact['address'])?></td>
-                            <td><?= htmlspecialchars($contact['notes'])?></td>
-                            <td>
-                                <a href="edit.php" class="edit">Edit</a>
-                                <a href="delete.php?id=<?= $contact['id'] ?>" class="delete" 
-                                onclick="return confirm('Do you want to Delete?')">Delete</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
+                <?php $counter = 1; ?>
+                <?php foreach ($contacts as $contact): ?>
+                <tr>
+                    <td><?= $counter ?></td>
+                    <td><?= htmlspecialchars($contact['full_name'])?></td>
+                    <td><?= htmlspecialchars($contact['phone'])?></td>
+                    <td><?= htmlspecialchars($contact['email'])?></td>
+                    <td><?= htmlspecialchars($contact['address'])?></td>
+                    <td><?= htmlspecialchars($contact['notes'])?></td>
+                    <td>
+                        <a href="edit.php?id=<?= $contact['id']?>" class="edit">Edit</a>
+                        <a href="index.php?delete_id=<?= $contact['id'] ?>" class="delete"
+                            onclick="return confirm('Do you want to Delete?')">Delete</a>
+                    </td>
+                </tr>
+                <?php $counter++; ?>
+                <?php endforeach; ?>
                 <?php else: ?>
-                        <tr>
-                            <td colspan="7">No contacts</td>
-                        </tr>
+                <tr>
+                    <td colspan="7">No contacts</td>
+                </tr>
                 <?php endif; ?>
             </tbody>
         </table>
