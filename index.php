@@ -21,7 +21,7 @@ $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h1>Address Book</h1>
 
         <div class="add-btn">
-            <a href="#">+ Add new contact</a>
+            <a href="add.php">+ Add new contact</a>
         </div>
 
         <table>
