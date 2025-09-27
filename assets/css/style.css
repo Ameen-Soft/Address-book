@@ -1,0 +1,85 @@
+body {
+  font-family: "Tajawal", Arial, sans-serif;
+  background-color: #f4f6f9;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 90%;
+  margin: 40px auto;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.add-btn {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.add-btn a {
+  text-decoration: none;
+  background: #28a745;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.add-btn a:hover {
+  background: #218838;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+table thead {
+  background: #333;
+  color: #fff;
+}
+
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+}
+
+table tbody tr:nth-child(even) {
+  background: #f9f9f9;
+}
+
+.edit, .delete {
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.edit {
+  background: #007bff;
+  color: #fff;
+  margin-right: 4px;
+}
+
+.delete {
+  background: #dc3545;
+  color: #fff;
+}
+
+.edit:hover {
+  background: #0056b3;
+}
+
+.delete:hover {
+  background: #a71d2a;
+}
