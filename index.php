@@ -1,8 +1,16 @@
 <?php
 require 'db.php';
 
-$stmt = $pdo->query("SELECT * FROM contacts");
+$limit = 5;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($page - 1) * $limit;
+
+$stmt = $pdo->query("SELECT * FROM contacts LIMIT $limit OFFSET $offset");
 $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$total_stmt = $pdo->query("SELECT COUNT(*) FROM contacts");
+$total_contacts = $total_stmt->fetchColumn();
+$total_pages = ceil($total_contacts / $limit);
 
 if (isset($_GET['delete_id'])) {
     $delete_id = (int) $_GET['delete_id'];
@@ -46,7 +54,7 @@ if (isset($_GET['delete_id'])) {
             </thead>
             <tbody>
                 <?php if ($contacts): ?>
-                <?php $counter = 1; ?>
+                <?php $counter = ($page - 1) * $limit + 1; ?>
                 <?php foreach ($contacts as $contact): ?>
                 <tr>
                     <td><?= $counter ?></td>
@@ -69,7 +77,16 @@ if (isset($_GET['delete_id'])) {
                 </tr>
                 <?php endif; ?>
             </tbody>
-        </table>
+        </div>
+    </table>
+    <div class="pagination">
+        <?php if ($page > 1): ?>
+            <a href="index.php?page=<?= $page-1 ?>">&laquo; Previous</a>
+        <?php endif; ?>
+
+        <?php if ($page < $total_pages): ?>
+            <a href="index.php?page=<?= $page+1 ?>">Next &raquo;</a>
+        <?php endif; ?>
     </div>
 
 </body>

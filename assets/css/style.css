@@ -156,3 +156,22 @@ form a {
 form a:hover {
   text-decoration: underline;
 }
+
+.pagination {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 6px 12px;
+    margin: 0 5px;
+    background: #007bff;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+}
+
+.pagination a:hover {
+    background: #0056b3;
+}
