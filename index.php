@@ -5,21 +5,35 @@ $limit = 5;
 $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 $offset = ($page - 1) * $limit;
 
-$stmt = $pdo->query("SELECT * FROM contacts LIMIT $limit OFFSET $offset");
-$contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-$total_stmt = $pdo->query("SELECT COUNT(*) FROM contacts");
-$total_contacts = $total_stmt->fetchColumn();
-$total_pages = ceil($total_contacts / $limit);
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 if (isset($_GET['delete_id'])) {
     $delete_id = (int) $_GET['delete_id'];
     $stmt = $pdo->prepare("DELETE FROM contacts WHERE id = ?");
     $stmt->execute([$delete_id]);
-
-    header("Location: index.php");
+    header("Location: index.php?page=$page&search=" . urlencode($search));
     exit();
 }
+
+if ($search !== '') {
+    $like = "%$search%";
+
+    $stmt = $pdo->prepare("SELECT * FROM contacts 
+                           WHERE full_name LIKE ? OR email LIKE ? OR phone LIKE ? 
+                           LIMIT $limit OFFSET $offset");
+    $stmt->execute([$like, $like, $like]);
+
+    $total_stmt = $pdo->prepare("SELECT COUNT(*) FROM contacts 
+                                 WHERE full_name LIKE ? OR email LIKE ? OR phone LIKE ?");
+    $total_stmt->execute([$like, $like, $like]);
+} else {
+    $stmt = $pdo->query("SELECT * FROM contacts LIMIT $limit OFFSET $offset");
+    $total_stmt = $pdo->query("SELECT COUNT(*) FROM contacts");
+}
+
+$contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$total_contacts = $total_stmt->fetchColumn();
+$total_pages = ceil($total_contacts / $limit);
 ?>
 
 <!DOCTYPE html>
@@ -39,6 +53,11 @@ if (isset($_GET['delete_id'])) {
         <div class="add-btn">
             <a href="add.php">+ Add new contact</a>
         </div>
+
+        <form action="" method="GET" class="search-form">
+            <input type="text" name="search" placeholder="Search contacts..." value="<?= htmlspecialchars($search) ?>">
+            <button type="submit">Search</button>
+        </form>
 
         <table>
             <thead>
@@ -77,16 +96,16 @@ if (isset($_GET['delete_id'])) {
                 </tr>
                 <?php endif; ?>
             </tbody>
-        </div>
-    </table>
-    <div class="pagination">
-        <?php if ($page > 1): ?>
-            <a href="index.php?page=<?= $page-1 ?>">&laquo; Previous</a>
-        <?php endif; ?>
+        </table>
+        <div class="pagination">
+            <?php if ($page > 1): ?>
+            <a href="index.php?page=<?= $page-1 ?>&search=<?= urlencode($search) ?>">&laquo; Previous</a>
+            <?php endif; ?>
 
-        <?php if ($page < $total_pages): ?>
-            <a href="index.php?page=<?= $page+1 ?>">Next &raquo;</a>
-        <?php endif; ?>
+            <?php if ($page < $total_pages): ?>
+            <a href="index.php?page=<?= $page+1 ?>&search=<?= urlencode($search) ?>">Next &raquo;</a>
+            <?php endif; ?>
+        </div>
     </div>
 
 </body>
